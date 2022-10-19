@@ -48,7 +48,7 @@ class Employee:
 
 
 	def shiftsRemaining(self, schedule):
-		'''employee's shifts remaining is max_shifts - the number of shifts they are currently scheduled for'''
+		'''employee's shifts remaining is max_shifts - the number of shifts they are currently in the schedule for'''
 		remainingShifts = self.max_shifts
 		for shift in schedule:
 			if self in shift:
@@ -79,18 +79,15 @@ def can_take_on_role(employee, role, schedule=None): # Chaining the schedule in 
 	
 	return True
 
-def employee_role_rank(employee): # Question: So does a key automatacilly take in the arguement of an employee here?
-								# The question arises when I tried to pass in a schdedule arguement to this function for shiftsRemaining to work.
+def employee_role_rank(employee, schedule):
 	#highest aptitude for role
 	#shouldn't have another role that day (not a dealbreaker)
+	#if employee in schedule:
+		# don't assign them another role for that day.
+		# so. role.day is checked with employee's avail key.
+		#TODO
 
-	#if an employee already has a shift on that day.
-	# make them less likely to get another role that.
-
-	# Take into account shiftsRemaining.
-	# Currently don't see how to do that without passing in the schedule here.
-
-	return 1
+	return employee.shiftsRemaining(schedule)
 
 
 def createSchedule(roles, employees):
@@ -99,9 +96,10 @@ def createSchedule(roles, employees):
 		#find all the available employees for role
 		possible_employees = [employee for employee in employees if can_take_on_role(employee, role, week_schedule)] # the week_schedule chaining here is not ideal.
 		#assign the best employee for the role
-		role_and_employee = (role, max(possible_employees, key=employee_role_rank) )
-		#TODO: exception for ValueError, when possible employees is empty.
-		#ValueError = assign 'unassigned' string. or an 'unassigned' employee object?
+		try:
+			role_and_employee = (role, max(possible_employees, key=lambda employee: employee_role_rank(employee, week_schedule) )) # this is mostly here to play with a lambda.
+		except ValueError:
+			role_and_employee = (role, Employee('Unassinged',99,{}))
 		week_schedule.append(role_and_employee)
 
 	return week_schedule
@@ -116,9 +114,7 @@ roles = [
 employees = [
 	Employee(
 		name="Sil", 
-		max_shifts=2, # Right now when this is '1 or 2', a ValueError: max() arg is an empty sequence.
-		#TODO: fix this scenario
-		#in this case, the single shift should be assigned to weekday(1) instead of taking the slot Ashlynn can take on weekday(0) 
+		max_shifts=2,
 		availability={
 			Weekday(0): {"aux", "lunch", "eve"}, # Question: Why a set?
 			Weekday(1): {"lunch"}
@@ -147,14 +143,3 @@ print(weekly_schedule)
 for re in weekly_schedule:
 	print(re[0].name, re[0].day, re[1].name)
 	print(re[1].shiftsRemaining(weekly_schedule))
-
-print(weekly_schedule)
-print(f'shifts remaining for {employees[0].name}: {employees[0].shiftsRemaining(weekly_schedule)}')
-
-"""
-[
-	(Lunch, Sil),
-	(Aux, Mathew),
-	...
-]
-"""
