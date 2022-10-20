@@ -67,6 +67,12 @@ class Employee:
 	}
 	"""
 
+def isDouble(employee, schedule, role): # How to think about consolidating the same use of arguements here?
+	for grouping in schedule:
+		if not grouping[0].day == role.day or not grouping[1].name == employee.name:
+			return False
+	return True
+
 def can_take_on_role(employee, role, schedule=None): # Chaining the schedule in here to get it to 'shifts remaining' does not seem optimal.
 													# TODO: fix this
 	#number of shifts available > 0
@@ -79,25 +85,28 @@ def can_take_on_role(employee, role, schedule=None): # Chaining the schedule in 
 	
 	return True
 
-def employee_role_rank(employee, schedule):
-	#highest aptitude for role
-	#shouldn't have another role that day (not a dealbreaker)
-	#if employee in schedule:
-		# don't assign them another role for that day.
-		# so. role.day is checked with employee's avail key.
-		#TODO
+def employee_role_rank(employee, schedule, role): #Oh, maybe I could pass in the role_and_employees list directly, to consolidate arguments?
+	employeeRank = 100
+	#TODO highest aptitude for role
 
-	return employee.shiftsRemaining(schedule)
+	if isDouble(employee, schedule, role):
+		employeeRank -=80
+	if employee.shiftsRemaining(schedule) <= 2:
+		employeeRank -= 40
+	# print(employee.name)
+	# print(employeeRank)
+
+	return employeeRank
 
 
 def createSchedule(roles, employees):
 	week_schedule = []
 	for role in roles:
 		#find all the available employees for role
-		possible_employees = [employee for employee in employees if can_take_on_role(employee, role, week_schedule)] # the week_schedule chaining here is not ideal.
+		possible_employees = [employee for employee in employees if can_take_on_role(employee, role, week_schedule)]
 		#assign the best employee for the role
 		try:
-			role_and_employee = (role, max(possible_employees, key=lambda employee: employee_role_rank(employee, week_schedule) )) # this is mostly here to play with a lambda.
+			role_and_employee = (role, max(possible_employees, key=lambda employee: employee_role_rank(employee, week_schedule, role) ))
 		except ValueError:
 			role_and_employee = (role, Employee('Unassinged',99,{}))
 		week_schedule.append(role_and_employee)
