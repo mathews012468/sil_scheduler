@@ -147,8 +147,31 @@ employees = [
 	)
 ]
 
-weekly_schedule = createSchedule(roles, employees)
-print(weekly_schedule)
-for re in weekly_schedule:
-	print(re[0].name, re[0].day, re[1].name)
-	print(re[1].shiftsRemaining(weekly_schedule))
+# [(<__main__.Role object at 0x10877fb20>, <__main__.Employee object at 0x10877c7c0>)]
+
+def scheduleView_Restaurant(schedule):
+	'''print the schedule in 'Restaurant View' '''
+	for i in range(7): # for the seven days of the week.
+		headerDate= Weekday(i)
+		print(f'{headerDate}')
+		for grouping in schedule:
+			role = grouping[0]
+			employee = grouping[1]
+			if role.day == headerDate:
+				print(f'{role.name}: {employee.name}')
+
+		#print roles for that day with assigned employees.
+pass
+
+def scheduleView_SinglePerson(schedule, employee):
+	pass
+
+if __name__ == "__main__":
+	weekly_schedule = createSchedule(roles, employees)
+
+	scheduleView_Restaurant(weekly_schedule)
+	
+	print(weekly_schedule)
+	for re in weekly_schedule:
+		print(re[0].name, re[0].day, re[1].name)
+		print(re[1].shiftsRemaining(weekly_schedule))
