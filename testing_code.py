@@ -13,25 +13,24 @@ with open("testing/input/employee1.txt") as f:
 
             #max shifts is on next line after colon
             line = f.readline()
-            max_shifts = extract_data(line)
+            max_shifts = int(extract_data(line))
 
-            week_availability = []
-            for _ in range(7):
+            weekAvailability = {}
+            for i in range(7):
+                weekday = main.Weekday(i)
                 line = f.readline()
-                availability_list_str = extract_data(line)
-                #turn the availability list (str) into an actual list
-                #not using json.loads because it doesn't work well with
-                #lists of strings
-                availability_list = ast.literal_eval(availability_list_str)
-                week_availability.append(availability_list)
-            
-            employees.append([name,max_shifts,availability_list])
+                dayAvailability_string = extract_data(line)
+                dayAvailability = ast.literal_eval(dayAvailability_string)
+                weekAvailability[weekday] = dayAvailability
+
+            employees.append([name,max_shifts,weekAvailability])
 
 with open("testing/input/role1.txt") as f:
     roles = []
     while line := f.readline():
         if line.startswith("Day"):
-            day = extract_data(line)
+            dayname = extract_data(line).upper()
+            day = main.Weekday[dayname]
 
             line = f.readline()
             role = extract_data(line)
@@ -43,13 +42,32 @@ with open("testing/input/role1.txt") as f:
 
 role_objs = []
 for role in roles:
-    role_name = role[1]
     day = role[0]
+    role_name = role[1]
     calltime = role[2]
 
     new_role = main.Role(name=role_name, day=day)
     role_objs.append(new_role)
 
-print(role_objs)
-print(employees)
-print(f'roles list:{roles}\n')
+role = role_objs[0]
+print(role.name)
+print(role.day)
+print(role.callTime)
+
+mRole = main.roles[0]
+print(mRole.name)
+print(mRole.day)
+print(mRole.callTime)
+
+employee_objects = []
+for employee in employees:
+    name = employee[0]
+    max_shifts = employee[1]
+    availability = employee[2]
+    
+    new_employee = main.Employee(name,max_shifts,availability)
+    employee_objects.append(new_employee)
+
+schedule = main.createSchedule(role_objs, employee_objects)
+
+main.scheduleView_Restaurant(schedule)

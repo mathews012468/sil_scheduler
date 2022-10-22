@@ -160,18 +160,11 @@ def scheduleView_Restaurant(schedule):
 			if role.day == headerDate:
 				print(f'{role.name}: {employee.name}')
 
-		#print roles for that day with assigned employees.
-pass
-
 def scheduleView_SinglePerson(schedule, employee):
+	'''print schedule for single person point of view '''
 	pass
 
 if __name__ == "__main__":
 	weekly_schedule = createSchedule(roles, employees)
 
 	scheduleView_Restaurant(weekly_schedule)
-	
-	print(weekly_schedule)
-	for re in weekly_schedule:
-		print(re[0].name, re[0].day, re[1].name)
-		print(re[1].shiftsRemaining(weekly_schedule))
