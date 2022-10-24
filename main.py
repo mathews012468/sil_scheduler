@@ -11,6 +11,35 @@ class Weekday(Enum):
 	SATURDAY = 5
 	SUNDAY = 6
 
+class Day:
+	#the appeal of a Day object seems again to have a container that day's roles.
+	# having some reason or sense to the order of roles stored in a day is appealing-
+	# for having a grasp on the steps taken in 'createSchedule'.
+	# a space for a date is attractive too.
+	def __init__(self, name, roles, date=None):
+		self.name = name # enum of weekday
+		self.date = date #date object?
+		
+		# This mimics callTimes from Roles, with a few unelegant hitches.
+		# copied all the roles from the current week's schedule-
+		# a one-off specifc role of FMN that only a single employee can do.
+		# multiple instances of 'brunch', 'lunch', 'door',
+		# and an unelegant solution for 'shermans6pm'
+
+		# I do like the idea of a day object knowing which roles to assign to itself with from a general 'role database'.
+		# the idea being that the roles each day calls for can be exposed later as it can change week-to-week/month-to-month
+
+		roles = {
+			Weekday.MONDAY: {'lunch', 'swing', 'shermans', 'door', 'uber', 'vbar', 'bbar','front','veranda','outside','back','middle'},
+			Weekday.TUESDAY: {'lunch', 'swing', 'FMN', 'shermans', 'shermans6pm', 'door', 'uber', 'vbar', 'bbar','front','veranda','outside','back','middle'},
+			Weekday.WEDNESDAY: {'lunch', 'swing', 'shermans', 'door', 'uber', 'vbar', 'bbar','front','veranda','outside','back','middle'},
+			Weekday.THURSDAY: {'lunch', 'swing', 'shermans','shermans2','shermans6pm','door','door2', 'uber', 'vbar', 'bbar','front','veranda','outside','back','middle'},
+			Weekday.FRIDAY: {'lunch', 'lunch2', 'shermans','shermans2','shermans6pm', 'shermans6pm-2', 'door', 'door2','aux', 'uber', 'vbar', 'bbar','front','veranda','outside','back','middle'},
+			Weekday.SATURDAY: {'door', 'door2', 'brunch_door', 'brunch1', 'brunch2', 'brunch3', 'shermans', 'shermans6pm_1', 'shermans6pm_2','veranda','front','outside','vbar','back','middle','uber'},
+			Weekday.SUNDAY: {'door', 'brunch_door','shermans', 'front', 'bbar', 'vbar','shermans_2','brunch_1', 'brunch_2','outside','brunch_3','veranda','back','middle','uber'}
+		}
+		self.roles = roles.get(name, roles)
+
 class Role:
 	def __init__(self, name, day, callTime=None): 
 		self.name = name
@@ -99,6 +128,30 @@ def employee_role_rank(employee, schedule, role): #Oh, maybe I could pass in the
 	return employeeRank
 
 
+#the desire is to create a 'schedule' for a single day.
+# no, not quite. not to create a schedule in isolation. it 'can' be created for a single day or any number of days needed
+# however, when an employee gets matches with a role- inserted into the schedule-
+# this should definitely be taken into account i.e. 'employee role rank will change accordingly'
+# so the sectioning of a day is desirable (why now?), while the full container of 'whatever number of days' a schedule is made of-
+# is neccesary for apt decision making.
+
+#this introduces the idea of a container of 'whatever number of days' the schedule is made of.
+#that container, is for some reason what I long for.
+
+#the Day objects have their place.
+# for storing a list of roles, a name of the day, and a date.
+# This container to allow for 'open' finding and matching employees is currently the empty list of week_schedule.
+# This container seems important- more so than the simple definition it currently takes at the start of createSchedule.
+# is that so?
+def fillDay(day, employees):
+	'''finds matches for each role in a Day'''
+	#for roles in Day('monday').roles:
+	#find possible employees for each role
+	# store that possible list
+	
+
+	pass
+
 def createSchedule(roles, employees):
 	week_schedule = []
 	for role in roles:
@@ -113,6 +166,11 @@ def createSchedule(roles, employees):
 
 	return week_schedule
 
+#Is this container of 'roles' the sticking point?
+# I want this container to 'come from somewhere'
+#The roles of a Day? A list of Days, each bringing their list of roles?
+# What is this a representaion of?
+# it's source is a list of roles, which come from Days- of which there can be n number of.
 roles = [
 	Role(name="lunch", day=Weekday(0)), 
 	Role(name="back", day=Weekday(0)), 
@@ -147,8 +205,6 @@ employees = [
 	)
 ]
 
-# [(<__main__.Role object at 0x10877fb20>, <__main__.Employee object at 0x10877c7c0>)]
-
 def scheduleView_Restaurant(schedule):
 	'''print the schedule in 'Restaurant View' '''
 	for i in range(7): # for the seven days of the week.
@@ -162,9 +218,22 @@ def scheduleView_Restaurant(schedule):
 
 def scheduleView_SinglePerson(schedule, employee):
 	'''print schedule for single person point of view '''
+	print(employee.name)
+	employeeShifts = sorted([grouping[0] for grouping in schedule if employee in grouping], key=lambda role: role.day.value)
+	for role in employeeShifts:
+		print(f'{role.day.name.capitalize()}- {role.name.capitalize()} {role.callTime}')
+	
+		
+		
+		# get weekday(i) role 
+		# find monday's role and print it.
+	# get all the roles assigned to this employee
+
+	#print {Weekday(i)}: {role}, {callTime}
 	pass
 
 if __name__ == "__main__":
 	weekly_schedule = createSchedule(roles, employees)
 
-	scheduleView_Restaurant(weekly_schedule)
+	# scheduleView_Restaurant(weekly_schedule)
+	# scheduleView_SinglePerson(weekly_schedule,employees[0])
