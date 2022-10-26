@@ -118,9 +118,30 @@ def createRoles(week):
 	for day in week:
 		for role_name in day.roles:
 			role = Role(name=role_name, day=day.name)
-			#day = enum of day.
 			roles.append(role)
 	return roles
+
+#this version assigns the employee to the role object at role.employee.
+#this came up since I was having trouble retrieving the data of each role,employee pair
+#when trying to display it in the scheduleView functions below.
+#though with this approach, the role objects get denser and denser as they go-
+#This might have downsides I'm unaware off?
+
+#Also- it doens't actually work cause the related functions, can_take_on_role and such
+# have not be re-written to take in this approach.
+def createSchedule_objectversion(week, employees):
+	roles = createRoles(week)
+	week_schedule = []
+	for role in roles:
+		possible_employees = [employee for employee in employees if can_take_on_role(employee, role, week_schedule)]
+		#find possible employees who have matching availability
+		try:
+			role.employee = max(possible_employees, key=lambda employee: employee_role_rank(employee, week_schedule, role))
+		except ValueError:
+			role.employee = Employee('Unassigned',99,{})
+		week_schedule.append(role)
+
+	return week_schedule
 
 def createSchedule(week, employees):
 	roles = createRoles(week)
@@ -184,6 +205,9 @@ def scheduleView_SinglePerson(schedule, employee):
 
 if __name__ == "__main__":
 	weekly_schedule = createSchedule(week, employees)
+
+	#weekly_schedule = createSchedule_objectversion(week, employees)
+	#print(weekly_schedule)
 
 	scheduleView_Restaurant(weekly_schedule)
 	# scheduleView_SinglePerson(weekly_schedule,employees[0])
