@@ -49,15 +49,15 @@ for role in roles:
     new_role = main.Role(name=role_name, day=day)
     role_objs.append(new_role)
 
-role = role_objs[0]
-print(role.name)
-print(role.day)
-print(role.callTime)
+# role = role_objs[0]
+# print(role.name)
+# print(role.day)
+# print(role.callTime)
 
-mRole = main.roles[0]
-print(mRole.name)
-print(mRole.day)
-print(mRole.callTime)
+# mRole = main.roles[0]
+# print(mRole.name)
+# print(mRole.day)
+# print(mRole.callTime)
 
 employee_objects = []
 for employee in employees:
