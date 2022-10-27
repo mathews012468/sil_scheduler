@@ -47,7 +47,7 @@ class Employee:
 		'''employee's shifts remaining is max_shifts - the number of shifts they are currently in the schedule for'''
 		remainingShifts = self.max_shifts
 		for shift in schedule:
-			if self in shift:
+			if self in shift.values():
 				remainingShifts -= 1
 		return remainingShifts
 
@@ -75,11 +75,9 @@ def employee_role_rank(employee, schedule, role): #Oh, maybe I could pass in the
 	#TODO highest aptitude for role
 
 	if isDouble(employee, schedule, role):
-		employeeRank -=80
+		employeeRank -= 80
 	if employee.shiftsRemaining(schedule) <= 2:
 		employeeRank -= 40
-	# print(employee.name)
-	# print(employeeRank)
 
 	return employeeRank
 
